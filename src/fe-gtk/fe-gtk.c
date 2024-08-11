@@ -1057,7 +1057,11 @@ osx_show_uri (const char *url)
 static inline char *
 escape_uri (const char *uri)
 {
-	return g_uri_escape_string(uri, G_URI_RESERVED_CHARS_GENERIC_DELIMITERS G_URI_RESERVED_CHARS_SUBCOMPONENT_DELIMITERS, FALSE);
+	gchar *esc;
+	GRegex *regex;
+	esc = g_uri_escape_string(uri, G_URI_RESERVED_CHARS_GENERIC_DELIMITERS G_URI_RESERVED_CHARS_SUBCOMPONENT_DELIMITERS "%", FALSE);
+	regex = g_regex_new("\%(?![0-9a-fA-F][0-9a-fA-F])", G_REGEX_OPTIMIZE, 0, NULL);
+	return g_regex_replace(regex, esc, -1, 0, "%25", 0, NULL);
 }
 
 static inline gboolean
